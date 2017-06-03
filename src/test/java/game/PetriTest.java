@@ -118,6 +118,21 @@ public class PetriTest {
     }
 
     @Test
+    public void testReverse(){
+        int size = 5;
+        Petri petri = new Petri(size);
+
+        int row = 1;
+        int column = 1;
+
+        petri.reverse(row, column);
+        assertTrue(petri.isLiving(row, column));
+
+        petri.reverse(row, column);
+        assertFalse(petri.isLiving(row, column));
+    }
+
+    @Test
     public void testShouldLiveInNextGeneration_becomeLiving() {
         Petri petri = new Petri(new int[][]
                 {

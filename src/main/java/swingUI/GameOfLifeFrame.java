@@ -9,7 +9,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.*;
 
-public class GameOfLifeFrame extends JFrame {
+public class GameOfLifeFrame extends JFrame implements ActionListener {
     private static final int DEFAULT_WIDTH = 640;// 单位：像素
     private static final int DEFAULT_HEIGHT = 480;// 单位：像素
 
@@ -17,12 +17,27 @@ public class GameOfLifeFrame extends JFrame {
     private EvolveRatePanel evolveRatePanel;
     private UpdatePetriTask updatePetriTask;
 
+    private Petri petri;
+
     public GameOfLifeFrame(Petri petri) {
+        this.petri = petri;
+
         makeUIComponents(petri);
 
         new Thread(updatePetriTask = new UpdatePetriTask(evolveRatePanel.getEvolveIntervalInMills(), false)).start();
-        updatePetriTask.resume();
         evolveRatePanel.setEvolveRateController(updatePetriTask);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        Cell cell = (Cell) e.getSource();
+
+        if(updatePetriTask.isRunning()){
+            return;//确保同时只有1个线程访问{@link PetriSingleton#petri}
+        }
+
+        petri.reverse(cell.row, cell.column);
+        petriPanel.updateCellsToDisplay(petri);
     }
 
     private void makeUIComponents(Petri petri) {
@@ -30,7 +45,7 @@ public class GameOfLifeFrame extends JFrame {
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 
         this.setLayout(new BorderLayout());
-        this.add(petriPanel = new PetriPanel(petri.getSize()), BorderLayout.CENTER);
+        this.add(petriPanel = new PetriPanel(petri.getSize(), this), BorderLayout.CENTER);
         this.add(evolveRatePanel = new EvolveRatePanel(), BorderLayout.EAST);
 
         this.setVisible(true);
@@ -45,6 +60,10 @@ public class GameOfLifeFrame extends JFrame {
             this.evolveIntervalInMills = evolveIntervalInMills;
         }
 
+        boolean isRunning() {
+            return running;
+        }
+
         @Override
         public void resume() {
             running = true;
@@ -56,7 +75,7 @@ public class GameOfLifeFrame extends JFrame {
         }
 
         @Override
-        public void setInterval(long intervalInMills){
+        public void setInterval(long intervalInMills) {
             this.evolveIntervalInMills = intervalInMills;
             Thread.currentThread().interrupt();
         }
