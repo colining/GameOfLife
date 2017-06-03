@@ -1,4 +1,4 @@
-package colining.cn;
+package game;
 
 import org.junit.Test;
 
@@ -32,11 +32,11 @@ public class PetriTest {
     }
 
     @Test
-    public void testEvolve() {
+    public void testEvolve_allDie() {
         Petri petri = new Petri(new int[][]
                 {
                         {0, 0, 1},
-                        {0, 0, 0},
+                        {0, 0, 1},
                         {0, 0, 0}
                 });
         petri.evolve();
@@ -44,6 +44,59 @@ public class PetriTest {
                 {
                         {0, 0, 0},
                         {0, 0, 0},
+                        {0, 0, 0}
+                }), petri);
+    }
+
+    @Test
+    public void testEvolve_Array_With_Four_Rows_And_Columns() {
+        Petri petri = new Petri(new int[][]
+                {
+                        {0, 0, 1, 1},
+                        {0, 0, 1, 1},
+                        {0, 0, 0, 1},
+                        {0, 0, 0, 0}
+                });
+        petri.evolve();
+        assertEquals(new Petri(new int[][]
+                {
+                        {0, 0, 1, 1},
+                        {0, 0, 1, 1},
+                        {0, 0, 1, 1},
+                        {0, 0, 0, 0}
+                }), petri);
+    }
+
+    @Test
+    public void testEvolve_symbiotic() {//翻译：symbiotic-共生
+        Petri petri = new Petri(new int[][]
+                {
+                        {0, 1, 1},
+                        {0, 1, 1},
+                        {0, 0, 0}
+                });
+        petri.evolve();
+        assertEquals(new Petri(new int[][]
+                {
+                        {0, 1, 1},
+                        {0, 1, 1},
+                        {0, 0, 0}
+                }), petri);
+    }
+
+    @Test
+    public void testEvolve_proliferation() {//翻译：proliferation-增殖
+        Petri petri = new Petri(new int[][]
+                {
+                        {0, 1, 0},
+                        {0, 0, 1},
+                        {0, 1, 0}
+                });
+        petri.evolve();
+        assertEquals(new Petri(new int[][]
+                {
+                        {0, 0, 0},
+                        {0, 1, 1},
                         {0, 0, 0}
                 }), petri);
     }

@@ -1,4 +1,4 @@
-package colining.cn;
+package game;
 
 import org.junit.Test;
 
