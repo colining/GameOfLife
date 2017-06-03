@@ -4,6 +4,8 @@ import game.Petri;
 
 import java.awt.BorderLayout;
 import java.awt.TextArea;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.*;
 
@@ -11,17 +13,16 @@ public class GameOfLifeFrame extends JFrame {
     private static final int DEFAULT_WIDTH = 640;// 单位：像素
     private static final int DEFAULT_HEIGHT = 480;// 单位：像素
 
-    private volatile long evolveIntervalInMills;
-
     private PetriPanel petriPanel;
+    private EvolveRatePanel evolveRatePanel;
     private UpdatePetriTask updatePetriTask;
 
-    public GameOfLifeFrame(Petri petri, long evolveIntervalInMills) {
+    public GameOfLifeFrame(Petri petri) {
         makeUIComponents(petri);
 
-        this.evolveIntervalInMills = evolveIntervalInMills;
-        new Thread(updatePetriTask = new UpdatePetriTask(false)).start();
+        new Thread(updatePetriTask = new UpdatePetriTask(evolveRatePanel.getEvolveIntervalInMills(), false)).start();
         updatePetriTask.resume();
+        evolveRatePanel.setEvolveRateController(updatePetriTask);
     }
 
     private void makeUIComponents(Petri petri) {
@@ -30,24 +31,34 @@ public class GameOfLifeFrame extends JFrame {
 
         this.setLayout(new BorderLayout());
         this.add(petriPanel = new PetriPanel(petri.getSize()), BorderLayout.CENTER);
-        this.add(new EvolveRatePanel(), BorderLayout.EAST);
+        this.add(evolveRatePanel = new EvolveRatePanel(), BorderLayout.EAST);
 
         this.setVisible(true);
     }
 
-    private class UpdatePetriTask implements Runnable {
+    private class UpdatePetriTask implements Runnable, EvolveRateController {
         private volatile boolean running;
+        private volatile long evolveIntervalInMills;
 
-        UpdatePetriTask(boolean running) {
+        UpdatePetriTask(long evolveIntervalInMills, boolean running) {
             this.running = running;
+            this.evolveIntervalInMills = evolveIntervalInMills;
         }
 
-        void resume() {
+        @Override
+        public void resume() {
             running = true;
         }
 
-        void pause() {
+        @Override
+        public void pause() {
             running = false;
+        }
+
+        @Override
+        public void setInterval(long intervalInMills){
+            this.evolveIntervalInMills = intervalInMills;
+            Thread.currentThread().interrupt();
         }
 
         public void run() {
