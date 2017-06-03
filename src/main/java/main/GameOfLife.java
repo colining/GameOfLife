@@ -1,10 +1,11 @@
 package main;
 
 
-import com.sun.org.apache.bcel.internal.generic.DDIV;
 import game.Petri;
+import org.omg.PortableInterceptor.INACTIVE;
 
 public class GameOfLife {
+    public static long updateIntervalInMills = 1000;
 
     public static void main(String[] args) {
         PetriUserInterface ui = new PetriUserInterface() {
@@ -21,19 +22,33 @@ public class GameOfLife {
             }
         };
 
-        int[][] initialCells = new int[][]{
-                {0, 0,0, 1},
-                {0, 0, 0, 1},
-                {0, 0, 0, 1},
-                {1, 1, 1, 1},
+        FrameRateUserInterface frameRateUserInterface = new FrameRateUserInterface() {
+            public void setUpdateInterval(long intervalInMills) {
+                intervalInMills = intervalInMills;
+            }
+
+            public long getIntervalInMills() {
+                return intervalInMills;
+            }
+
+            public int[][] getCells() {
+                return new int[0][];
+            }
+
+            public void setCells(int[][] cells) {
+                cells = cells;
+            }
         };
+
+
+        int[][] initialCells = frameRateUserInterface.getCells();
+
         Petri petri = new Petri(initialCells);
         while (true) {
             System.out.println("===============================");
             ui.display(petri);
-
             try {
-                Thread.sleep(2000);
+                Thread.sleep(frameRateUserInterface.getIntervalInMills());
             } catch (InterruptedException e) {
                 break;
             }

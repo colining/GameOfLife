@@ -7,4 +7,5 @@ import game.Petri;
  */
 public interface PetriUserInterface {
       void display(Petri petri);
+
 }
