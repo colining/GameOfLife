@@ -47,15 +47,15 @@ public class PetriTest {
 
     }
 
-//    @Test
-//    public void testShouldLiveInNextTurn_becomeLiving() {
-//        Petri petri = new Petri(new int[][]
-//                {
-//                        {1, 0, 1},
-//                        {0, 1, 0},
-//                        {0, 0, 0}
-//                });
-//
-//        assertTrue(petri.shouldLiveNextTurn(1, 2));
-//    }
+    @Test
+    public void testShouldLiveInNextTurn_becomeLiving() {
+        Petri petri = new Petri(new int[][]
+                {
+                        {1, 0, 1},
+                        {0, 1, 0},
+                        {0, 0, 0}
+                });
+
+        assertTrue(petri.shouldLiveNextTurn(1, 2));
+    }
 }
