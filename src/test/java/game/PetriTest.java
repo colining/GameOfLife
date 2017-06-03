@@ -49,7 +49,7 @@ public class PetriTest {
     }
 
     @Test
-    public void testEvolve_Array_With_Four_Rows_And_Columns() {
+    public void testEvolve_competeToDeath() {
         Petri petri = new Petri(new int[][]
                 {
                         {0, 0, 1, 1},
@@ -61,7 +61,7 @@ public class PetriTest {
         assertEquals(new Petri(new int[][]
                 {
                         {0, 0, 1, 1},
-                        {0, 0, 1, 1},
+                        {0, 0, 0, 0},
                         {0, 0, 1, 1},
                         {0, 0, 0, 0}
                 }), petri);
