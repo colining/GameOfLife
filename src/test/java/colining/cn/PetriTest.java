@@ -32,6 +32,23 @@ public class PetriTest {
     }
 
     @Test
+    public void testEvolve() {
+        Petri petri = new Petri(new int[][]
+                {
+                        {0, 0, 1},
+                        {0, 0, 0},
+                        {0, 0, 0}
+                });
+        petri.evolve();
+        assertEquals(new Petri(new int[][]
+                {
+                        {0, 0, 0},
+                        {0, 0, 0},
+                        {0, 0, 0}
+                }), petri);
+    }
+
+    @Test
     public void testSet() {
         int size = 5;
         Petri petri = new Petri(size);
@@ -48,7 +65,7 @@ public class PetriTest {
     }
 
     @Test
-    public void testShouldLiveInNextTurn_becomeLiving() {
+    public void testShouldLiveInNextGeneration_becomeLiving() {
         Petri petri = new Petri(new int[][]
                 {
                         {1, 0, 1},
@@ -56,6 +73,42 @@ public class PetriTest {
                         {0, 0, 0}
                 });
 
-        assertTrue(petri.shouldLiveNextTurn(1, 2));
+        assertTrue(petri.shouldLiveNextGeneration(1, 2));
+    }
+
+    @Test
+    public void testShouldLiveInNextGeneration_stayLiving() {
+        Petri petri = new Petri(new int[][]
+                {
+                        {1, 1, 0},
+                        {0, 1, 0},
+                        {0, 0, 0}
+                });
+
+        assertTrue(petri.shouldLiveNextGeneration(1, 2));
+    }
+
+    @Test
+    public void testShouldLiveInNextGeneration_stayDead() {
+        Petri petri = new Petri(new int[][]
+                {
+                        {1, 0, 0},
+                        {0, 1, 0},
+                        {0, 0, 0}
+                });
+
+        assertFalse(petri.shouldLiveNextGeneration(1, 2));
+    }
+
+    @Test
+    public void testShouldLiveInNextGeneration_becomeDead() {
+        Petri petri = new Petri(new int[][]
+                {
+                        {1, 1, 0},
+                        {0, 0, 0},
+                        {0, 0, 0}
+                });
+
+        assertFalse(petri.shouldLiveNextGeneration(1, 2));
     }
 }
