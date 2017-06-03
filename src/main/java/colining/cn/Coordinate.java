@@ -12,13 +12,16 @@ public class Coordinate {
         this.column = column;
     }
 
-    public Set<Coordinate> getSurroundings(int size) {
+    public Set<Coordinate> getSurroundings(int petriSize) {
         Set<Coordinate> results = new HashSet<Coordinate>();
 
         for (int row = this.row - 1; row <= this.row + 1; row++) {
             for (int column = this.column - 1; column <= this.column + 1; column++) {
                 Coordinate neighbour = new Coordinate(row, column);
-                if(neighbour.equals(this)){
+                if (neighbour.equals(this)) {
+                    continue;
+                }
+                if (!neighbour.isValid(petriSize)) {
                     continue;
                 }
                 results.add(neighbour);
@@ -26,6 +29,18 @@ public class Coordinate {
         }
 
         return results;
+    }
+
+    public boolean isValid(int petriSize) {
+        return rowIsValid(petriSize) && columnIsValid(petriSize);
+    }
+
+    private boolean rowIsValid(int petriSize) {
+        return row >= 1 && row <= petriSize;
+    }
+
+    private boolean columnIsValid(int petriSize) {
+        return column >= 1 && column <= petriSize;
     }
 
     @Override
