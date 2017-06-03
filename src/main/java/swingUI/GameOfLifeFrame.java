@@ -3,7 +3,6 @@ package swingUI;
 import game.Petri;
 
 import java.awt.BorderLayout;
-import java.awt.TextArea;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -14,39 +13,44 @@ public class GameOfLifeFrame extends JFrame implements ActionListener {
     private static final int DEFAULT_HEIGHT = 480;// 单位：像素
 
     private PetriPanel petriPanel;
-    private EvolveRatePanel evolveRatePanel;
+    private PresetPetriAndEvolveRatePanel presetPetriAndEvolveRatePanel;
+
     private UpdatePetriTask updatePetriTask;
 
     private Petri petri;
 
-    public GameOfLifeFrame(Petri petri) {
+    public GameOfLifeFrame(Petri petri, boolean isRunning, PresetPetri... presets) {
         this.petri = petri;
-
-        makeUIComponents(petri);
-
-        new Thread(updatePetriTask = new UpdatePetriTask(evolveRatePanel.getEvolveIntervalInMills(), false)).start();
-        evolveRatePanel.setEvolveRateController(updatePetriTask);
+        makeUIComponents(petri, isRunning, presets);
+        new Thread(updatePetriTask = new UpdatePetriTask(presetPetriAndEvolveRatePanel.getEvolveIntervalInMills(), isRunning)).start();
+        presetPetriAndEvolveRatePanel.setEvolveRateController(updatePetriTask);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Cell cell = (Cell) e.getSource();
-
-        if(updatePetriTask.isRunning()){
+        if (updatePetriTask.isRunning()) {
             return;//确保同时只有1个线程访问{@link PetriSingleton#petri}
         }
 
-        petri.reverse(cell.row, cell.column);
-        petriPanel.updateCellsToDisplay(petri);
+        if (e.getSource() instanceof Cell) {
+            Cell cell = (Cell) e.getSource();
+            petri.reverse(cell.row, cell.column);
+            petriPanel.updateCellsToDisplay(petri);
+        } else if (e.getSource() instanceof PresetPetriButton) {
+            PresetPetriButton button = (PresetPetriButton) e.getSource();
+            button.update(petri);
+        }
+
     }
 
-    private void makeUIComponents(Petri petri) {
+    private void makeUIComponents(Petri petri, boolean isRunning, PresetPetri... presets) {
         this.setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 
         this.setLayout(new BorderLayout());
         this.add(petriPanel = new PetriPanel(petri.getSize(), this), BorderLayout.CENTER);
-        this.add(evolveRatePanel = new EvolveRatePanel(), BorderLayout.EAST);
+        this.add(presetPetriAndEvolveRatePanel = new PresetPetriAndEvolveRatePanel(
+                isRunning, this, presets), BorderLayout.EAST);
 
         this.setVisible(true);
     }
