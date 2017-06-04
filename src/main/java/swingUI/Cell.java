@@ -17,14 +17,14 @@ public class Cell extends JButton {
 
     public void setLiving(boolean isLiving) {
         this.setText(getDisplayedState(isLiving));
-        if(isLiving){
-            this.setBackground(Color.BLUE);
-        }else{
-            this.setBackground(Color.WHITE);
-        }
+        this.setBackground(getDisplayedColor(isLiving));
     }
 
     private String getDisplayedState(boolean isLiving) {
         return isLiving ? LIVING : DEAD;
+    }
+
+    private Color getDisplayedColor(boolean isLiving) {
+        return isLiving ? Color.BLUE : Color.WHITE;
     }
 }

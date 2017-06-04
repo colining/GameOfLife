@@ -1,7 +1,18 @@
 package swingUI;
 
-/**
- * Created by asus on 2017/6/3.
- */
-public class PresetPetriButton {
+import game.Petri;
+
+import javax.swing.*;
+
+public class PresetPetriButton extends JButton {
+    private PresetPetri preset;
+
+    PresetPetriButton(PresetPetri preset) {
+        super(preset.name);
+        this.preset = preset;
+    }
+
+    void update(Petri petri){
+        petri.update(preset.cells);
+    }
 }
